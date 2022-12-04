@@ -16,7 +16,6 @@ import com.orderservice.pojo.OrdersRequest;
 import com.orderservice.pojo.OrdersResponse;
 import com.orderservice.repository.OrderRepository;
 
-import jakarta.transaction.Transactional;
 
 
 @Service
@@ -29,7 +28,6 @@ public class OrdersServiceImp implements OrderService{
 	@Autowired
 	private RestTemplate resttemplate;
 
-	@Transactional
 	@Override
 	public TranscationResponse createorder(TranscationRequest transcationRequest) {
 		String response;
@@ -43,7 +41,7 @@ public class OrdersServiceImp implements OrderService{
 		PaymentRequest payobj = transcationRequest.getPayreq();
 		payobj.setOrdernum(transcationRequest.getOrdreq().getOrdernum());
 		payobj.setOrderdescription(transcationRequest.getOrdreq().getOrderdescription());
-		ResponseEntity<PaymentRequest> payres = resttemplate.postForEntity("http://localhost:8082/api/payment/createPayment", payobj, PaymentRequest.class);
+		ResponseEntity<PaymentRequest> payres = resttemplate.postForEntity("http://PAYMENT-SERVICE/api/payment/createPayment", payobj, PaymentRequest.class);
 		response = payres.getBody().getStatus().equalsIgnoreCase("SUCCESS")?"Order placed successfully":"payment failed order added to cart";
 		ordres.setMessage("order has been placed successfully");
 		return new TranscationResponse(transcationRequest.getOrdreq().getOrdernum(),payres.getBody().getPaymentamount(),response,UUID.randomUUID().toString());
